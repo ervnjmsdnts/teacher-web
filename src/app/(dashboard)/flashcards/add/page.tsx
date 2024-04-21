@@ -10,11 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import { ArrowLeft, Loader2, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { db } from '@/firebase';
+import { addDoc, collection } from 'firebase/firestore';
+import { useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 
 const schema = z.object({
   name: z
@@ -39,12 +43,14 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export default function AddFlashcardPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
+      name: '',
       questions: [{ question: '', answer: '', difficulty: 'easy' }],
     },
   });
@@ -54,8 +60,26 @@ export default function AddFlashcardPage() {
     name: 'questions',
   });
 
-  const onSubmit = (data: Schema) => {
-    console.log(data);
+  const { toast } = useToast();
+
+  const onSubmit = async (data: Schema) => {
+    try {
+      setIsLoading(true);
+      await addDoc(collection(db, 'flashcards'), data);
+      form.reset({
+        name: '',
+        questions: [{ answer: '', difficulty: 'easy', question: '' }],
+      });
+      toast({ title: 'Successfully Added Flashcard' });
+      router.back();
+    } catch (_) {
+      toast({
+        title: 'Something went wrong adding flashcard',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addCard = () => {
@@ -125,7 +149,7 @@ export default function AddFlashcardPage() {
                     control={form.control}
                     name={`questions.${index}.difficulty`}
                     render={({ field }) => (
-                      <>
+                      <div className='grid gap-1.5'>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}>
@@ -144,7 +168,7 @@ export default function AddFlashcardPage() {
                               ?.message
                           }
                         </span>
-                      </>
+                      </div>
                     )}
                   />
                 </div>
@@ -156,7 +180,11 @@ export default function AddFlashcardPage() {
               Add Question
               <Plus className='w-4 h-4 ml-2' />
             </Button>
-            <Button onClick={form.handleSubmit(onSubmit)} type='submit'>
+            <Button
+              disabled={isLoading}
+              onClick={form.handleSubmit(onSubmit)}
+              type='submit'>
+              {isLoading && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}{' '}
               Submit
             </Button>
           </div>
