@@ -17,7 +17,7 @@ export default function Sidebar() {
             <Button
               asChild
               className='justify-start'
-              variant={pathname === '/flashcards' ? 'default' : 'ghost'}>
+              variant={pathname.includes('/flashcards') ? 'default' : 'ghost'}>
               <Link href='/flashcards'>
                 <WalletCards className='mr-2 h-5 w-5' />
                 Flashcards
@@ -26,7 +26,7 @@ export default function Sidebar() {
             <Button
               asChild
               className='justify-start'
-              variant={pathname === '/quizzes' ? 'default' : 'ghost'}>
+              variant={pathname.includes('/quizzes') ? 'default' : 'ghost'}>
               <Link href='/quizzes'>
                 <NotebookPen className='mr-2 h-5 w-5' />
                 Quizzes

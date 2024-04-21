@@ -7,15 +7,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CirclePlus, EllipsisVertical, Pencil, Trash } from 'lucide-react';
+import Link from 'next/link';
 
 export default function FlashcardsPage() {
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div className='flex items-center justify-between'>
         <h2 className='text-2xl font-bold'>Flashcards</h2>
-        <Button>
-          <CirclePlus className='mr-2 w-5 h-5 text-white' />
-          Add Flashcard
+        <Button asChild>
+          <Link href='/flashcards/add'>
+            <CirclePlus className='mr-2 w-5 h-5 text-white' />
+            Add Flashcard
+          </Link>
         </Button>
       </div>
       <div className='grid grid-cols-4 gap-3 w-full'>
