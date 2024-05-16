@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('REQUEST: ', request);
+    console.log('REQUEST: ', JSON.stringify(request, undefined, 4));
     const test = await request.text();
     console.log('RESULTS: ', test);
 
