@@ -63,6 +63,7 @@ export default function HomePage() {
   return (
     <div className='h-screen w-screen flex items-center justify-center bg-primary'>
       <div className='bg-white flex flex-col gap-4 rounded-md p-4'>
+        <h2>hi</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
             <FormField
