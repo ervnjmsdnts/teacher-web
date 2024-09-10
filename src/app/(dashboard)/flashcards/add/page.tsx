@@ -24,6 +24,9 @@ const schema = z.object({
   name: z
     .string({ required_error: 'Field is required' })
     .min(1, 'Field is required'),
+  type: z
+    .string({ required_error: 'Field is required' })
+    .min(1, 'Field is required'),
   questions: z
     .object({
       question: z
@@ -32,9 +35,6 @@ const schema = z.object({
       answer: z
         .string({ required_error: 'Answer is required' })
         .min(1, 'Field is required'),
-      difficulty: z
-        .string({ required_error: 'Difficulty is required' })
-        .min(1, 'Difficulty is required'),
     })
     .array()
     .min(1),
@@ -51,7 +51,8 @@ export default function AddFlashcardPage() {
     reValidateMode: 'onChange',
     defaultValues: {
       name: '',
-      questions: [{ question: '', answer: '', difficulty: 'easy' }],
+      type: '',
+      questions: [{ question: '', answer: '' }],
     },
   });
 
@@ -68,7 +69,8 @@ export default function AddFlashcardPage() {
       await addDoc(collection(db, 'flashcards'), data);
       form.reset({
         name: '',
-        questions: [{ answer: '', difficulty: 'easy', question: '' }],
+        type: '',
+        questions: [{ answer: '', question: '' }],
       });
       toast({ title: 'Successfully Added Flashcard' });
       router.back();
@@ -83,7 +85,7 @@ export default function AddFlashcardPage() {
   };
 
   const addCard = () => {
-    append({ answer: '', question: '', difficulty: 'easy' });
+    append({ answer: '', question: '' });
     form.trigger('questions');
   };
 
@@ -103,6 +105,39 @@ export default function AddFlashcardPage() {
             <span className='text-destructive text-sm'>
               {form.formState.errors.name?.message}
             </span>
+          </div>
+          <div className='grid gap-1.5'>
+            <Label htmlFor='type'>Type</Label>
+            <Controller
+              control={form.control}
+              name='type'
+              render={({ field }) => (
+                <div className='grid gap-1.5'>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='english'>English</SelectItem>
+                      <SelectItem value='math'>Math</SelectItem>
+                      <SelectItem value='science'>Science</SelectItem>
+                      <SelectItem value='socialScience'>
+                        Social Science
+                      </SelectItem>
+                      <SelectItem value='filipino'>Filipino</SelectItem>
+                      <SelectItem value='professionalEducation'>
+                        Professional Education
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className='text-destructive text-sm'>
+                    {form.formState.errors.type?.message}
+                  </span>
+                </div>
+              )}
+            />
           </div>
           {fields.map((item, index) => (
             <div key={item.id}>
@@ -142,35 +177,6 @@ export default function AddFlashcardPage() {
                   <span className='text-destructive text-sm'>
                     {form.formState.errors.questions?.[index]?.answer?.message}
                   </span>
-                </div>
-                <div className='grid gap-1.5'>
-                  <Label htmlFor={`difficulty-${index}`}>Difficulty</Label>
-                  <Controller
-                    control={form.control}
-                    name={`questions.${index}.difficulty`}
-                    render={({ field }) => (
-                      <div className='grid gap-1.5'>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value='easy'>Easy</SelectItem>
-                            <SelectItem value='medium'>Medium</SelectItem>
-                            <SelectItem value='hard'>Hard</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <span className='text-destructive text-sm'>
-                          {
-                            form.formState.errors.questions?.[index]?.difficulty
-                              ?.message
-                          }
-                        </span>
-                      </div>
-                    )}
-                  />
                 </div>
               </div>
             </div>

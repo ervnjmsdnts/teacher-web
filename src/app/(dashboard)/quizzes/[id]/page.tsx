@@ -24,6 +24,9 @@ const schema = z.object({
   name: z
     .string({ required_error: 'Field is required' })
     .min(1, 'Field is required'),
+  type: z
+    .string({ required_error: 'Field is required' })
+    .min(1, 'Field is required'),
   questions: z
     .object({
       question: z
@@ -49,6 +52,7 @@ type Schema = z.infer<typeof schema>;
 type Quiz = {
   id: string;
   name: string;
+  type: string;
   questions: {
     answer: number;
     options: string[];
@@ -67,6 +71,7 @@ export default function UpdateQuizPage() {
     reValidateMode: 'onChange',
     defaultValues: {
       name: '',
+      type: '',
       questions: [{ question: '', answer: '0', options: ['', '', '', ''] }],
     },
   });
@@ -77,9 +82,11 @@ export default function UpdateQuizPage() {
 
       if (docs.exists()) {
         const data = docs.data() as Quiz;
+        console.log(data);
         setCurrentQuiz(data);
         form.reset({
           name: data.name,
+          type: data.type,
           questions: data.questions.map((q) => ({
             ...q,
             answer: String(q.answer),
@@ -108,6 +115,7 @@ export default function UpdateQuizPage() {
       });
       form.reset({
         name: '',
+        type: '',
         questions: [{ answer: '0', question: '', options: ['', '', '', ''] }],
       });
       toast({ title: 'Successfully updated quiz' });
@@ -143,6 +151,40 @@ export default function UpdateQuizPage() {
             <span className='text-destructive text-sm'>
               {form.formState.errors.name?.message}
             </span>
+          </div>
+          <div className='grid gap-1.5'>
+            <Label htmlFor='type'>Type</Label>
+            <Controller
+              control={form.control}
+              name='type'
+              render={({ field }) => (
+                <div className='grid gap-1.5'>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='english'>English</SelectItem>
+                      <SelectItem value='math'>Math</SelectItem>
+                      <SelectItem value='science'>Science</SelectItem>
+                      <SelectItem value='socialScience'>
+                        Social Science
+                      </SelectItem>
+                      <SelectItem value='filipino'>Filipino</SelectItem>
+                      <SelectItem value='professionalEducation'>
+                        Professional Education
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className='text-destructive text-sm'>
+                    {form.formState.errors.type?.message}
+                  </span>
+                </div>
+              )}
+            />
           </div>
           {fields.map((item, index) => (
             <div key={item.id}>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { LogOut, NotebookPen, WalletCards } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/firebase';
+import Image from 'next/image';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -20,10 +21,10 @@ export default function Sidebar() {
     <div className='min-w-80 p-4'>
       <nav className='bg-white flex flex-col h-full rounded-lg p-4 border'>
         <div className='flex-grow'>
-          <h1 className='text-xl font-semibold pb-6 text-center text-primary'>
-            TEACHER
-          </h1>
-          <div className='flex flex-col gap-2'>
+          <div className='flex items-center justify-center rounded bg-[#1d374e]'>
+            <Image src='/teacher-bg.png' width={100} height={100} alt='logo' />
+          </div>
+          <div className='flex flex-col gap-2 pt-4'>
             <Button
               asChild
               className='justify-start'

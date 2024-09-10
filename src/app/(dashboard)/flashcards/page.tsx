@@ -37,7 +37,6 @@ type Flashcards = {
   questions: {
     question: string;
     answer: string;
-    difficulty: string;
   }[];
 };
 

@@ -24,6 +24,9 @@ const schema = z.object({
   name: z
     .string({ required_error: 'Field is required' })
     .min(1, 'Field is required'),
+  type: z
+    .string({ required_error: 'Field is required' })
+    .min(1, 'Field is required'),
   questions: z
     .object({
       question: z
@@ -55,6 +58,7 @@ export default function AddQuizPage() {
     reValidateMode: 'onChange',
     defaultValues: {
       name: '',
+      type: '',
       questions: [{ question: '', answer: '0', options: ['', '', '', ''] }],
     },
   });
@@ -78,6 +82,7 @@ export default function AddQuizPage() {
       });
       form.reset({
         name: '',
+        type: '',
         questions: [{ answer: '0', question: '', options: ['', '', '', ''] }],
       });
       toast({ title: 'Successfully added quiz' });
@@ -113,6 +118,39 @@ export default function AddQuizPage() {
             <span className='text-destructive text-sm'>
               {form.formState.errors.name?.message}
             </span>
+          </div>
+          <div className='grid gap-1.5'>
+            <Label htmlFor='type'>Type</Label>
+            <Controller
+              control={form.control}
+              name='type'
+              render={({ field }) => (
+                <div className='grid gap-1.5'>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='english'>English</SelectItem>
+                      <SelectItem value='math'>Math</SelectItem>
+                      <SelectItem value='science'>Science</SelectItem>
+                      <SelectItem value='socialScience'>
+                        Social Science
+                      </SelectItem>
+                      <SelectItem value='filipino'>Filipino</SelectItem>
+                      <SelectItem value='professionalEducation'>
+                        Professional Education
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className='text-destructive text-sm'>
+                    {form.formState.errors.type?.message}
+                  </span>
+                </div>
+              )}
+            />
           </div>
           {fields.map((item, index) => (
             <div key={item.id}>
